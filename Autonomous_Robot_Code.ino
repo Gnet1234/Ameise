@@ -1,6 +1,11 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
+// Include FNQR (Freenove Quadruped Robot) library
+#include <FNQR.h>
+
+FNQR robot;
+
 // Initialize PWM driver with default address
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
@@ -34,7 +39,7 @@ void setup() {
   pwm.begin();
   pwm.setOscillatorFrequency(27000000); // Set the internal oscillator frequency
   pwm.setPWMFreq(SERVO_FREQ);  // Set PWM frequency
-
+  robot.Start();
   delay(10);
 }
 void loop() {
@@ -43,18 +48,36 @@ void loop() {
     // Move servo from 0 to 180 degrees
     Serial.println("It has turned to 0 degrees");
     moveServo(ANGLE_MIN, ANGLE_MAX);
-    
+    result1 = Sense();
 
     Serial.println("Waiting for timer.");
-    delay(500);  // Hold at 180 degrees for a bit
+    delay(450);  // Hold at 180 degrees for a bit
 
     // Move servo from 180 to 0 degrees
     Serial.println("It has turned to 180 degrees");
     moveServo(ANGLE_MAX, ANGLE_MIN);
+    result2 = Sense();
+
+    if (result1 < result2){
+      // Move in the direction of servo at 0 degrees.
+      robot.TurnLeft();
+      delay(1000);
+    }
+    else if (result2 < result1){
+      // Move in the direction of the servo at 180 degrees
+      robot.TurnRight();
+      delay(1000);
+    }
+    else {
+      // Move backwards
+      robot.CrawlBackward();
+      delay(1000);
+    }
   }
   else {
     // Move forward
-    
+    robot.CrawlForward();
+    delay(1000);
   }
 
 }
