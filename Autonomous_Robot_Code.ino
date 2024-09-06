@@ -61,15 +61,24 @@ void loop() {
     if (result1 < result2){
       // Move in the direction of servo at 0 degrees.
       robot.TurnLeft();
+      robot.TurnLeft();
+      robot.TurnLeft();
+      robot.TurnLeft();
       delay(1000);
     }
     else if (result2 < result1){
       // Move in the direction of the servo at 180 degrees
       robot.TurnRight();
+      robot.TurnRight();
+      robot.TurnRight();
+      robot.TurnRight();
       delay(1000);
     }
     else {
       // Move backwards
+      robot.CrawlBackward();
+      robot.CrawlBackward();
+      robot.CrawlBackward();
       robot.CrawlBackward();
       delay(1000);
     }
