@@ -1,24 +1,13 @@
-#include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
+#include <Servo.h>
 
 // Include FNQR (Freenove Quadruped Robot) library
 #include <FNQR.h>
 
 FNQR robot;
 
-// Initialize PWM driver with default address
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-
 // Constants
 #define ANGLE_MIN 0    // Minimum angle
 #define ANGLE_MAX 180  // Maximum angle
-#define PWM_MIN 150    // PWM value for 0 degrees
-#define PWM_MAX 600    // PWM value for 180 degrees
-#define SERVO_FREQ 50  // Servo frequency in Hz
-
-
-// Fixed channel for testing
-const uint8_t servoChannel = 2;
 
 // defines pins numbers
 const int trigPin = A0;
@@ -31,23 +20,29 @@ int result1;
 int result2;
 int counter = 0;
 
+Servo myServo;
 
 void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+
   Serial.begin(9600); // Starts the serial communication
-  pwm.begin();
-  pwm.setOscillatorFrequency(27000000); // Set the internal oscillator frequency
-  pwm.setPWMFreq(SERVO_FREQ);  // Set PWM frequency
+
+  // Attach servo motors
+  myServo.attach(4);
+  
+  // Starts the Robot
   robot.Start();
   delay(10);
+
 }
+
 void loop() {
   result = Sense();
   if (result < 20) {
     // Move servo from 0 to 180 degrees
     Serial.println("It has turned to 0 degrees");
-    moveServo(ANGLE_MIN, ANGLE_MAX);
+    myServo.write(0);
     result1 = Sense();
 
     Serial.println("Waiting for timer.");
@@ -55,32 +50,20 @@ void loop() {
 
     // Move servo from 180 to 0 degrees
     Serial.println("It has turned to 180 degrees");
-    moveServo(ANGLE_MAX, ANGLE_MIN);
+    myServo.write(180);
     result2 = Sense();
 
     if (result1 < result2){
       // Move in the direction of servo at 0 degrees.
-      robot.TurnLeft();
-      robot.TurnLeft();
-      robot.TurnLeft();
-      robot.TurnLeft();
-      delay(1000);
+      TurnLeft();
     }
     else if (result2 < result1){
       // Move in the direction of the servo at 180 degrees
-      robot.TurnRight();
-      robot.TurnRight();
-      robot.TurnRight();
-      robot.TurnRight();
-      delay(1000);
+      TurnRight();
     }
     else {
       // Move backwards
-      robot.CrawlBackward();
-      robot.CrawlBackward();
-      robot.CrawlBackward();
-      robot.CrawlBackward();
-      delay(1000);
+      MovingBackwards();
     }
   }
   else {
@@ -89,22 +72,6 @@ void loop() {
     delay(1000);
   }
 
-}
-
-void moveServo(uint8_t startAngle, uint8_t endAngle) {
-  int step = (startAngle < endAngle) ? 1 : -1;
-  for (uint8_t angle = startAngle; angle != endAngle + step; angle += step) {
-    uint16_t pwmValue = angleToPWM(angle);
-    pwm.setPWM(servoChannel, 0, pwmValue);
-    delay(20);  // Adjust delay for smoothness of movement
-    counter = counter + 1;
-    Serial.println(counter);
-    if (counter > 500){
-      Serial.println("Ending the process");
-      counter = 0;
-      break;
-    }
-  }
 }
 
 int Sense(){
@@ -126,8 +93,29 @@ int Sense(){
   return distance;
 }
 
-// Function to map angle to PWM pulse width
-uint16_t angleToPWM(uint8_t angle) {
-  return map(angle, ANGLE_MIN, ANGLE_MAX, PWM_MIN, PWM_MAX);
+void LookLeft() {
+  // Move in the direction of servo at 0 degrees.
+  robot.TurnLeft();
+  robot.TurnLeft();
+  robot.TurnLeft();
+  robot.TurnLeft();
+  delay(1000);
 }
 
+void LookRight(){
+  // Move in the direction of the servo at 180 degrees
+  robot.TurnRight();
+  robot.TurnRight();
+  robot.TurnRight();
+  robot.TurnRight();
+  delay(1000);
+}
+
+void MovingBackwards(){
+  // Move backwards
+  robot.CrawlBackward();
+  robot.CrawlBackward();
+  robot.CrawlBackward();
+  robot.CrawlBackward();
+  delay(1000);
+}
