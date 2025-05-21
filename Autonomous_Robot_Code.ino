@@ -34,6 +34,7 @@ void setup() {
   // Starts the Robot
   robot.Start();
   delay(10);
+  myServo.write(90);
 
 }
 
@@ -95,6 +96,7 @@ int Sense(){
 
 void LookLeft() {
   // Move in the direction of servo at 0 degrees.
+  myServo.write(90);
   robot.TurnLeft();
   robot.TurnLeft();
   robot.TurnLeft();
@@ -104,6 +106,7 @@ void LookLeft() {
 
 void LookRight(){
   // Move in the direction of the servo at 180 degrees
+  myServo.write(90);
   robot.TurnRight();
   robot.TurnRight();
   robot.TurnRight();
@@ -113,6 +116,7 @@ void LookRight(){
 
 void MovingBackwards(){
   // Move backwards
+  myServo.write(90);
   robot.CrawlBackward();
   robot.CrawlBackward();
   robot.CrawlBackward();
