@@ -5,10 +5,6 @@
 
 FNQR robot;
 
-// Constants
-#define ANGLE_MIN 0    // Minimum angle
-#define ANGLE_MAX 180  // Maximum angle
-
 // defines pins numbers
 const int trigPin = A0;
 const int echoPin = A1;
@@ -18,7 +14,6 @@ int distance;
 int result;
 int result1;
 int result2;
-int counter = 0;
 
 Servo myServo;
 
@@ -29,7 +24,7 @@ void setup() {
   Serial.begin(9600); // Starts the serial communication
 
   // Attach servo motors
-  myServo.attach(4);
+  myServo.attach(2);
   
   // Starts the Robot
   robot.Start();
@@ -51,16 +46,16 @@ void loop() {
 
     // Move servo from 180 to 0 degrees
     Serial.println("It has turned to 180 degrees");
-    myServo.write(180);
+    myServo.write(270);
     result2 = Sense();
 
     if (result1 < result2){
       // Move in the direction of servo at 0 degrees.
-      TurnLeft();
+      LookLeft();
     }
     else if (result2 < result1){
       // Move in the direction of the servo at 180 degrees
-      TurnRight();
+      LookRight();
     }
     else {
       // Move backwards
@@ -96,30 +91,30 @@ int Sense(){
 
 void LookLeft() {
   // Move in the direction of servo at 0 degrees.
-  myServo.write(90);
   robot.TurnLeft();
   robot.TurnLeft();
   robot.TurnLeft();
   robot.TurnLeft();
   delay(1000);
+  myServo.write(90);
 }
 
 void LookRight(){
   // Move in the direction of the servo at 180 degrees
-  myServo.write(90);
   robot.TurnRight();
   robot.TurnRight();
   robot.TurnRight();
   robot.TurnRight();
   delay(1000);
+  myServo.write(90);
 }
 
 void MovingBackwards(){
   // Move backwards
-  myServo.write(90);
   robot.CrawlBackward();
   robot.CrawlBackward();
   robot.CrawlBackward();
   robot.CrawlBackward();
   delay(1000);
+  myServo.write(90);
 }
