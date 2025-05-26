@@ -1,2 +1,2 @@
 # Ameise
-This is a hobby project, that is attempting to make an autonomous walking robot. 
+This is a hobby project, that is attempting to make an autonomous walking robot. It uses the freenove quadraple robot as a base. The plan is to make a robot that can move around an area on it's own and record data to be sent back another system. The goal is to make something similar to the Ameise from the 86 series. This will include video for image detection and thermal imaging. The code will be in C++. 
